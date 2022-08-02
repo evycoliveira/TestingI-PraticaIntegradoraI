@@ -11,7 +11,7 @@ public class ObterDiplomaController {
     @Autowired
     IObterDiplomaService service;
 
-    @PostMapping("/analyzeScores")
-    public StudentDTO analyzeScores(@RequestBody StudentDTO rq) { return service.analyzeScores(rq); }
+    @GetMapping("/analyzeScores/{studentId}")
+    public StudentDTO analyzeScores(@PathVariable Long studentId) { return service.analyzeScores(studentId); }
 
 }

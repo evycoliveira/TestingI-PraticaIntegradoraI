@@ -31,7 +31,7 @@ public class StudentController {
     }
 
     @PutMapping("/modifyStudent")
-    public ResponseEntity<Void> modifyStudent(@RequestBody @Valid StudentDTO stu) {
+    public ResponseEntity modifyStudent(@RequestBody @Valid StudentDTO stu) {
         this.studentService.update(stu);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
