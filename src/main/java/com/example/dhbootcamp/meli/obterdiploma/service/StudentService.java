@@ -1,6 +1,8 @@
 package com.example.dhbootcamp.meli.obterdiploma.service;
 
 import com.example.dhbootcamp.meli.obterdiploma.model.StudentDTO;
+import com.example.dhbootcamp.meli.obterdiploma.repository.IStudentDAO;
+import com.example.dhbootcamp.meli.obterdiploma.repository.IStudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
