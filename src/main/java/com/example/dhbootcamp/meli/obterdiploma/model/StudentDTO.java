@@ -1,13 +1,15 @@
 package com.example.dhbootcamp.meli.obterdiploma.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
 
 @Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class StudentDTO {
 
     Long id;
