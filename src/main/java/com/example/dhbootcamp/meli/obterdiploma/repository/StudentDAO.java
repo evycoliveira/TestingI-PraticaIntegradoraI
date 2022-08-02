@@ -28,7 +28,7 @@ public class StudentDAO implements IStudentDAO {
 
         try {
             properties.load(new ClassPathResource("application.properties").getInputStream());
-            this.SCOPE = properties.getProperty("api.scope");
+            this.SCOPE = "develop";
             this.loadData();
         }  catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +91,12 @@ public class StudentDAO implements IStudentDAO {
         ObjectMapper objectMapper = new ObjectMapper();
         File file;
         try {
-            file = ResourceUtils.getFile("./src/" + SCOPE + "/resources/users.json");
-            loadedData = objectMapper.readValue(file, new TypeReference<HashMap<Long, StudentDTO>>() {});
+            file = ResourceUtils.getFile("./src/main/resources/" + SCOPE + "/users.json");
+
+            if (file.exists()) {
+                loadedData = objectMapper.readValue(file, new TypeReference<HashMap<Long, StudentDTO>>() {});
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Failed while initializing DB, check your resources files.");
