@@ -2,7 +2,6 @@ package com.example.dhbootcamp.meli.obterdiploma.repository;
 
 import com.example.dhbootcamp.meli.obterdiploma.exception.StudentNotFoundException;
 import com.example.dhbootcamp.meli.obterdiploma.model.StudentDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.core.io.ClassPathResource;
@@ -12,16 +11,14 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Properties;
+import java.util.*;
 
 @Repository
 public class StudentDAO implements IStudentDAO {
 
     private String SCOPE;
 
-    private static HashMap<Long, StudentDTO> students;
+    private static List<StudentDTO> students;
 
     public StudentDAO() {
         Properties properties = new Properties();
@@ -47,11 +44,15 @@ public class StudentDAO implements IStudentDAO {
         StudentDTO studentToBeSaved = new StudentDTO(studentReceived);
 
         if (studentNotExist) {
-            Long largerIndex = (students.size() > 0) ? Collections.max(students.keySet()) : 0L;
+            Long largerIndex = 0L;
+            Optional<StudentDTO> studentCompared = students.stream().max(Comparator.comparing(StudentDTO::getId));
+            if (studentCompared.isPresent()) {
+                largerIndex = studentCompared.get().getId();
+            }
             studentToBeSaved.setId((largerIndex + 1L ));
         }
 
-        students.put(studentToBeSaved.getId(), studentToBeSaved);
+        students.add(studentToBeSaved);
 
         this.saveData();
 
@@ -78,15 +79,15 @@ public class StudentDAO implements IStudentDAO {
     @Override
     public StudentDTO findById(Long id) {
         loadData();
-        StudentDTO studentDTO = students.get(id);
-        if (studentDTO != null) {
-            return studentDTO;
+        Optional <StudentDTO> studentDTO = students.stream().filter(i -> i.getId().equals(id)).findFirst();
+        if (studentDTO.isPresent()) {
+            return studentDTO.get();
         }
         throw new StudentNotFoundException(id);
     }
 
     private void loadData() {
-        HashMap<Long, StudentDTO> loadedData = null;
+        List<StudentDTO> loadedData = null;
 
         ObjectMapper objectMapper = new ObjectMapper();
         File file;
@@ -94,7 +95,7 @@ public class StudentDAO implements IStudentDAO {
             file = ResourceUtils.getFile("./src/main/resources/" + SCOPE + "/users.json");
 
             if (file.exists()) {
-                loadedData = objectMapper.readValue(file, new TypeReference<HashMap<Long, StudentDTO>>() {});
+                loadedData = Arrays.asList(objectMapper.readValue(file, StudentDTO[].class));
             }
 
         } catch (FileNotFoundException e) {
